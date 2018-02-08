@@ -40,33 +40,33 @@ Date   :	8 février 2018
 #if(1)
 int main(void)
 {
-	unsigned int	id_fich;
+	unsigned int	id_fich1;
 	int				somme_octet1 = 0, somme_bloc1 = 0, i1 = 0, parti_bloc = 0;
-	t_block			un_bloc;
+	t_block			un_bloc1;
 	t_block			tab_bloc1[4000];
 
 	init_decoupage();
 
-	id_fich = ajouter_fichier("affiche.jpg");
+	id_fich1 = ajouter_fichier("affiche.jpg");
 
-	somme_bloc1 = get_taille_fichier(id_fich);
+	somme_bloc1 = get_taille_fichier(id_fich1);
 
-	printf("id = %u   taille total du fichier = %u\n\n", id_fich, somme_bloc1);
+	printf("id = %u   taille total du fichier = %u\n\n", id_fich1, somme_bloc1);
 
 	printf("Il y a actuellement %u fichier actif dans le programme\n\n", get_nb_fichiers());
 
-	printf("Valide ou pas : %u\n\n", id_fichier_valide(id_fich));
+	printf("Valide ou pas : %u\n\n", id_fichier_valide(id_fich1));
 	
-	if (id_fichier_valide(id_fich))
+	if (id_fichier_valide(id_fich1))
 	{
 		do {
 			
-			un_bloc = get_bloc();
-			somme_octet1 = get_taille_restante(id_fich);
-			printf("Taille restante a extraire : %u\n", somme_octet1);
+			un_bloc1 = get_bloc();
+			somme_octet1 = get_taille_restante(id_fich1);
 			
-			printf("Nombre de bloc emis : %u\n", get_nb_blocs_emis(id_fich));
 			
+			printf("Nombre de bloc emis : #%u ", get_nb_blocs_emis(id_fich1));
+			printf("\t Taille restante a extraire : %u \t octes\n", somme_octet1);
 			
 			i1=somme_octet1;
 		} while (i1 != 0);
