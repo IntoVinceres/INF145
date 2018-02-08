@@ -3,18 +3,18 @@
 /*===============================================================================================*/
 
 /*
-Par    :	Frédéric Thibault	
-Date   :	8 février 2018
+Par    :	FrÃ©dÃ©ric Thibault	
+Date   :	8 fÃ©vrier 2018
 
 
 */
 
 /*===============================================================================================*/
 
-//Permet de désactiver certains warnings du compilateur 
+//Permet de dÃ©sactiver certains warnings du compilateur 
 #define _CRT_SECURE_NO_WARNINGS 
 
-// Librairies usuelles à inclure 
+// Librairies usuelles Ã  inclure 
 #include	<stdio.h>
 #include	<stdlib.h>
 #include	<math.h>
@@ -24,7 +24,7 @@ Date   :	8 février 2018
 #include	"m_decoupage.h"
 
 /*===============================================================================================*/
-/*                   			  Déclaration des sous-programmes				                 */
+/*                   			  DÃ©claration des sous-programmes				                 */
 /*===============================================================================================*/
 
 /*===============================================================================================*/
@@ -53,23 +53,21 @@ int main(void)
 
 	printf("id = %u   taille total du fichier = %u\n\n", id_fich, somme_bloc1);
 
-	
+	printf("Il y a actuellement %u fichier actif dans le programme\n\n", get_nb_fichiers());
 
+	printf("Valide ou pas : %u\n\n", id_fichier_valide(id_fich));
+	
 	if (id_fichier_valide(id_fich))
 	{
 		do {
-			printf("Valide ou pas : %u\n", id_fichier_valide(id_fich));
-
-			somme_octet1 = get_taille_restante(id_fich);
-			printf("Taille restante a extraire : %u\n", somme_octet1);
+			
 			un_bloc = get_bloc();
-
-			printf("Nombre de bloc emis : %u\n", get_nb_blocs_emis(id_fich));
-
 			somme_octet1 = get_taille_restante(id_fich);
 			printf("Taille restante a extraire : %u\n", somme_octet1);
-
-			printf("Il y a actuellement %u fichier actif dans le programme\n", get_nb_fichiers());
+			
+			printf("Nombre de bloc emis : %u\n", get_nb_blocs_emis(id_fich));
+			
+			
 			i1=somme_octet1;
 		} while (i1 != 0);
 	}
@@ -79,7 +77,7 @@ int main(void)
 	printf("\n\n");
 	system("pause");
 
-	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	// et Ã‡A, c'est le retour d'un 0 au systÃ¨me d'exploitation.
 	return EXIT_SUCCESS;
 }
 #endif
@@ -94,7 +92,7 @@ int main(void)
 	t_block			un_block;
 	t_block			tab_block1[4000];
 
-	// Les variables locales y sont déclaré
+	// Les variables locales y sont dÃ©clarÃ©
 
 	init_decoupage();
 
@@ -108,7 +106,7 @@ int main(void)
 	printf("\n\n");
 	system("pause");
 
-	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	// et Ã‡A, c'est le retour d'un 0 au systÃ¨me d'exploitation.
 	return EXIT_SUCCESS;
 }
 #endif
@@ -120,5 +118,5 @@ int main(void)
 
 
 /*===============================================================================================*/
-/*                   				Définition des sous-programmes					             */
+/*                   				DÃ©finition des sous-programmes					             */
 /*===============================================================================================*/
