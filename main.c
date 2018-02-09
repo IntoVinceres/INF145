@@ -30,48 +30,45 @@ Date   :	8 février 2018
 /*===============================================================================================*/
 /*                   					LES CONSTANTES							                 */
 /*===============================================================================================*/
-
+#define TAILLE_T_BLOC	4000
+#define NBR_FICHIER	2	// on change selon la quantite de fichier 
 
 
 /*===============================================================================================*/
 /*												Main											 */		
 /*===============================================================================================*/
 
-#if(1)
+#if(NBR_FICHIER == 1) // un seul fichier
 int main(void)
 {
-	unsigned int	id_fich1;
-	int				somme_octet1 = 0, somme_bloc1 = 0, i1 = 0, parti_bloc = 0;
-	t_block			un_bloc1;
-	t_block			tab_bloc1[4000];
+//	unsigned int	id_fich1;
+	int				somme_octet1 = 0;
+	t_block			tab_bloc1[TAILLE_T_BLOC]; //JE SAIS PAS CA SERT A QUOI 
+	t_block			un_bloc;
 
-	init_decoupage();
+	init_decoupage(); // commande d'initiation
 
-	id_fich1 = ajouter_fichier("affiche.jpg");
-
-	somme_bloc1 = get_taille_fichier(id_fich1);
-
-	printf("id = %u   taille total du fichier = %u\n\n", id_fich1, somme_bloc1);
-
-	printf("Il y a actuellement %u fichier actif dans le programme\n\n", get_nb_fichiers());
-
-	printf("Valide ou pas : %u\n\n", id_fichier_valide(id_fich1));
+	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
+	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet du fichier
+	un_bloc.num_bloc = get_nb_fichiers();
+	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 	
-	if (id_fichier_valide(id_fich1))
+	print_bloc(&un_bloc);
+
+	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
 		do {
-			
-			un_bloc1 = get_bloc();
-			somme_octet1 = get_taille_restante(id_fich1);
-			
-			
-			printf("Nombre de bloc emis : #%u ", get_nb_blocs_emis(id_fich1));
-			printf("\t Taille restante a extraire : %u \t octes\n", somme_octet1);
-			
-			i1=somme_octet1;
-		} while (i1 != 0);
+
+			un_bloc = get_bloc();
+			somme_octet1 = get_taille_restante(un_bloc.f_identifiant);
+
+
+			printf("BLOC #%u (TRANSMIS) ", get_nb_blocs_emis(un_bloc.f_identifiant));
+			printf("\t Taille restante : %u \t octet\n", get_taille_restante(un_bloc.f_identifiant));
+
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
 	}
-	
+
 
 	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
 	printf("\n\n");
@@ -83,25 +80,57 @@ int main(void)
 #endif
 
 //Utile pour faire des tests. le 2e main est inactif en ce moment puisque (0)
-#if(0)
+#if(NBR_FICHIER == 2) // lorsqu'il y a deux fichiers
 int main(void)
 {
-	unsigned int	id_fich;
-	int				somme_octet1 = 0, somme_block1 = 0, i1 = 0;
-	int				somme_octet2 = 0, somme_block2 = 0, i2 = 0;
-	t_block			un_block;
-	t_block			tab_block1[4000];
+	int				somme_octet1 = 0, somme_octet2 = 0;
+	t_block			un_bloc,deux_bloc;
+	t_block			tab_bloc1[TAILLE_T_BLOC]; //JE SAIS PAS CA SERT A QUOI LIVE
 
 	// Les variables locales y sont déclaré
 
 	init_decoupage();
 
-	id_fich = ajouter_fichier("affiche.jpg");
+	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
+	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet du fichier
+	un_bloc.num_bloc = get_nb_fichiers();
+	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 
-	printf("id = %u\n", id_fich);
+	print_bloc(&un_bloc);
 
+	deux_bloc.f_identifiant = ajouter_fichier("affiche1.jpg"); //Reception du fichier
+	deux_bloc.taille_bloc = get_taille_fichier(deux_bloc.f_identifiant); //avoir la taille en octet du fichier
+	deux_bloc.num_bloc = get_nb_fichiers();
+	deux_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 
+	print_bloc(&deux_bloc);
 
+	if (id_fichier_valide(un_bloc.f_identifiant))
+	{
+		do {
+			somme_octet1 = get_taille_restante(un_bloc.f_identifiant);
+			un_bloc = get_bloc();
+			
+			printf("BLOC#%u\t(TRANSMIS) ", get_nb_blocs_emis(un_bloc.f_identifiant));
+			printf("\tID:%u",un_bloc.f_identifiant);
+			printf("\tTaille : %i\toctets\n", \
+				(somme_octet1-get_taille_restante(un_bloc.f_identifiant)));
+			
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+	}
+	if (id_fichier_valide(deux_bloc.f_identifiant))
+	{
+		do {
+			somme_octet2 = get_taille_restante(deux_bloc.f_identifiant);
+			deux_bloc = get_bloc();
+
+			printf("BLOC#%u\t(TRANSMIS) ", get_nb_blocs_emis(deux_bloc.f_identifiant));
+			printf("\tID:%u", deux_bloc.f_identifiant);
+			printf("\tTaille : %i\toctets\n", \
+				(somme_octet2-get_taille_restante(deux_bloc.f_identifiant)));
+			
+		} while (get_taille_restante(deux_bloc.f_identifiant) != 0);
+	}
 	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
 	printf("\n\n");
 	system("pause");
@@ -110,10 +139,6 @@ int main(void)
 	return EXIT_SUCCESS;
 }
 #endif
-
-
-
-
 /*===============================================================================================*/
 
 
