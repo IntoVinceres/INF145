@@ -4,6 +4,7 @@
 
 /*
 Par    :	Frédéric Thibault	
+		Christophe Lamarche
 Date   :	8 février 2018
 
 
