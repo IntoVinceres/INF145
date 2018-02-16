@@ -1,0 +1,6 @@
+﻿  main.c
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(101): warning C4047: 'function': 't_block **' differs in levels of indirection from 't_block (*)[4000]'
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(101): warning C4024: 'init_bloc': different types for formal and actual parameter 3
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(224): warning C4047: '=': 'unsigned char *' differs in levels of indirection from 't_block **'
+  __TRAVAIL_PRATIQUE-02.vcxproj -> C:\Users\an532\Documents\ÉTS\_2018_Hiver\INF145\__TRAVAIL_PRATIQUE-02\Debug\__TRAVAIL_PRATIQUE-02.exe
+  __TRAVAIL_PRATIQUE-02.vcxproj -> C:\Users\an532\Documents\ÉTS\_2018_Hiver\INF145\__TRAVAIL_PRATIQUE-02\Debug\__TRAVAIL_PRATIQUE-02.pdb (Partial PDB)
