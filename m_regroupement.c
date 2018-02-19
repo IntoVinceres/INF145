@@ -38,12 +38,19 @@
 t_regroupement init_regroupement(unsigned int id, int taille) {
 	t_regroupement objet;
 
-	//initialisation BIDON
-	objet.id_fichier = 0;
-	objet.nbr_bloc = 0;
-	objet.ptr_bloc = &objet;
-	objet.taille_tab = 0;
-	return objet;
+	objet.ptr_bloc = (t_block *)calloc(taille, sizeof(t_block));
+
+	if (objet.ptr_bloc == NULL) {
+		objet.taille_tab = 0;
+		objet.id_fichier = 0;
+		objet.nbr_bloc = 0;
+	}
+	else {
+		objet.taille_tab = taille * sizeof(t_block);
+		objet.id_fichier = id;
+		objet.nbr_bloc = taille;
+	}
+
 }
 
 // int empiler_bloc (t_regroupement * reg, t_block bloc)
@@ -95,6 +102,7 @@ int pile_blocs_nombre(const t_regroupement * reg) {
 // void free_pile_blocs (t_regroupement * reg)
 // Description : libere le tableau dynamique et remet tous les membres à 0 ou NULL
 void free_pile_blocs(t_regroupement * reg) {
+	free(reg->ptr_bloc); reg->ptr_bloc = NULL;
 	return;
 }
 
