@@ -41,7 +41,7 @@ C.
 /*                  LES CONSTANTES                         */
 /*=========================================================*/
 #define TAILLE_T_BLOC	4000
-#define NBR_FICHIER		1
+#define NBR_FICHIER		2
 /*=========================================================*/
 /*                       LES MACROS                        */
 /*=========================================================*/
@@ -84,7 +84,7 @@ typedef struct {
 }t_block;
 */ //  PUBLIC
 void proc_decoup(int * taille_octet, t_block * bloc);
-void init_bloc(const char * nom, t_block * bloc, t_block * tab_bloc[TAILLE_T_BLOC]);
+void init_bloc(const char * nom, t_block * bloc, t_block * tab_bloc, t_block* *ptr);
 void transf_bloc(t_block *bloc, t_block *ptr);
 //Programme principal: fonction qui retourne un entier (int)
 #if(NBR_FICHIER == 1)
@@ -96,11 +96,9 @@ int main(void)
 	t_block			un_bloc;
 	t_block			*ptr = NULL;
 
-	ptr = tab_bloc1;
-
 	init_decoupage(); // commande d'initiation
 
-	init_bloc("affiche1.jpg", &un_bloc, &tab_bloc1);
+	init_bloc("affiche1.jpg", &un_bloc, tab_bloc1, &ptr);
 	
 	print_bloc(&un_bloc);
 
@@ -136,21 +134,19 @@ int main(void)
 	// Les variables locales y sont déclaré
 
 	init_decoupage();
-	init_bloc("affiche.jpg", &un_bloc, &tab_bloc1);
+
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr_tab1);
 /* ------------ SUBSITITUTION ----------------
+	ptr_tab1=tab_bloc1
 	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
 	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet du fichier
 	un_bloc.num_bloc = get_nb_fichiers();
 	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 */
-	ptr_tab1 = tab_bloc1;
 	print_bloc(&un_bloc);
 
-	init_bloc("affiche1.jpg",&deux_bloc, &tab_bloc2);
-	ptr_tab2 = tab_bloc2;
-
+	init_bloc("affiche1.jpg",&deux_bloc, tab_bloc2, &ptr_tab2);
 	print_bloc(&deux_bloc);
-
 	printf("\nNOMBRE DE FICHIER ACTIF:%i\n",get_nb_fichiers());
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
@@ -219,7 +215,8 @@ void transf_bloc(t_block *bloc, t_block *ptr) {
 	return;
 }
 
-void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc[TAILLE_T_BLOC]) {
+void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr) {
+	*ptr = tab_bloc;
 	bloc->f_identifiant = ajouter_fichier(nom_fichier); //Reception du fichier
 	bloc->taille_bloc = get_taille_fichier(bloc->f_identifiant); //avoir la taille en octet du fichier
 	bloc->num_bloc = get_nb_fichiers(); // nombre de fichier ouvert
