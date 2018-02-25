@@ -59,9 +59,9 @@ t_regroupement init_regroupement(unsigned int id, int taille) {
 		objet.nbr_bloc = 0;
 	}
 	else {
-		objet.taille_tab = taille * sizeof(t_block);
+		objet.taille_tab = taille ;
 		objet.id_fichier = id;
-		objet.nbr_bloc = taille;
+		objet.nbr_bloc = 0;
 	}
 
 	return objet;
@@ -77,11 +77,12 @@ int empiler_bloc(t_regroupement * reg, t_block bloc) {
 	//verification de l'etat de la pile
 	if (pile_blocs_pleine(reg) != 0) {
 		result = 0; // le push a failli
+		printf("\nLA TENTATIVE D'EMPILER A ECHOUER\n");
 	}else{
 		*(reg->ptr_bloc+pile_blocs_nombre(reg)) = bloc; // depose (push) les informations du bloc \
 		dans la case memoire de la pile (prend en compte que la premiere espace memoire \
 		est la case 0
-		reg->nbr_bloc++; // informe du depot du bloc dans la pile
+		(reg->nbr_bloc)++; // informe du depot du bloc dans la pile
 		result = 1; // le push est complete
 	}
 
@@ -98,10 +99,12 @@ int depiler_bloc(t_regroupement * reg, t_block * bloc) {
 
 	if ((pile_blocs_vide(reg)) != 0) {
 		result = 0; //le pop a failli -- impossibilite d'effectuer la tache
+		printf("\nLA TENTATIVE DE DEPILER A ECHOUER\n");
 	}
 	else {
-		reg->nbr_bloc--; // on enleve un bloc dans la pile
+		(reg->nbr_bloc)--; // on enleve un bloc dans la pile
 		*bloc = *(reg->ptr_bloc+pile_blocs_nombre(reg)); // on transmet les informations dans le bloc
+		result = 1;
 	}
 
 	return result;
@@ -142,6 +145,7 @@ int pile_blocs_taille(const t_regroupement * reg) {
 int pile_blocs_nombre(const t_regroupement * reg) {
 	int nbr_actu = 0;
 	nbr_actu = reg->nbr_bloc; // transfert la quantite de t_bloc dans le tableau dynamique
+	
 	return nbr_actu;
 }
 
