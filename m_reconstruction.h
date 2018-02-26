@@ -34,7 +34,7 @@ Le module offre  :
 #include<math.h>
 #include<time.h>
 #include"m_decoupage.h"
-#include "m_regroupement.h"
+#include"m_regroupement.h"
 /*****************************************************/
 
 
@@ -52,9 +52,9 @@ typedef struct {
 	unsigned int id_fichier; // identifiant unique d'un fichier
 	t_block* ptr_bloc; //pointeur donnant acces au tableau dynamique de t_block
 	unsigned int taille_last_tab; //taille du tableau precedent
-	unsigned int nbr_bloc_actu; //nombre de t_bloc actuellement prÈsent
+	unsigned int nbr_bloc_actu; //nombre de t_bloc actuellement pr√©sent
 	unsigned int nbr_bloc_tot; //nobre total de t_block du fichier \
-					(qu'on obtient en recevant le dernier bloc du dÈcoupage)
+					(qu'on obtient en recevant le dernier bloc du d√©coupage)
 
 } t_reconstruction;
 
@@ -73,16 +73,17 @@ SPECIFICATIONS :
 /*****************************************************/
 
 /*************** INIT_RECONSTRUCTION *****************/
-/*
-Description : reÁoit líidentifiant unique díun fichier et 
+/* MUTATRICE
+Description : re√ßoit l‚Äôidentifiant unique d‚Äôun fichier et 
 la taille initiale de son tableau de reconstruction. Il 
-construit le tableau dynamique nÈcessaire et en cas de 
-succËs de líallocation, le tableau est traversÈ et les 
-identifiants-fichier sont tous mis ‡ 0 dans les blocs 
-puis la fonction fixe la taille, líidentifiant unique du 
-fichier et le nombre total de blocks ‡ 0 (en cas díÈchec 
-líallocation, tous les membres du t_reconstruction seront
-nuls (0 ou NULL)). On retourne le nouvel objet.
+construit le tableau dynamique n√©cessaire et en cas de 
+succ√®s de l‚Äôallocation, le tableau est travers√© et les 
+identifiants-fichier sont tous mis √† 0 dans les blocs 
+puis la fonction fixe la taille, l‚Äôidentifiant unique du 
+fichier et le nombre total de blocks √† 0 (en cas d‚Äô√©chec 
+l‚Äôallocation, tous les membres du t_reconstruction seront
+nuls (0 ou NULL)). On retourne le nouvel objet.
+
 PARAMETRES : id du fichier 
 			 taille initiale du tableau
 
@@ -95,15 +96,15 @@ t_reconstruction init_reconstruction(unsigned int id, int taille);
 /*****************************************************/
 
 /**************	REDIM_RECONSTRUCTION *****************/
-/*
-Description : ReÁoit líadresse díune reconstruction et
-díune taille, elle essaie de redimensionner son tableau
-en conservant les blocs prÈsents (allouez un nouveau 
+/* MUTATRICE
+Description : Re√ßoit l‚Äôadresse d‚Äôune reconstruction et
+d‚Äôune taille, elle essaie de redimensionner son tableau
+en conservant les blocs pr√©sents (allouez un nouveau 
 tableau et copiez-y tous les blocs du tableau actuel 
-avec memcpy). La fonction met líidentifiant fichier ‡ 0
+avec memcpy). La fonction met l‚Äôidentifiant fichier √† 0
 dans les nouvelles cases du tableau et ajuste les 
 autres membres de la structure. On retourne 1 en cas de
-succËs, 0 sinon
+succ√®s, 0 sinon
 
 PARAMETRES : un pointeur d'un objet de type t_reconstruction
 			 la nouvelle taille du tableau dynamique
@@ -119,10 +120,12 @@ int redim_reconstruction(t_reconstruction * rec, int nouvelle_taille);
 
 
 /***************** AJOUTER_BLOC **********************/
-/*
-Description : Si les conditions nÈcessaires sont
-satisfaites, on copie le bloc dans le tableau ‡ sa 
-position et on retourne 1 si líaction rÈussit, 0 sinon.On redimensionne le t_reconstruction si nÈcessaire.
+/* MUTATRICE
+Description : Si les conditions n√©cessaires sont
+satisfaites, on copie le bloc dans le tableau √† sa 
+position et on retourne 1 si l‚Äôaction r√©ussit, 0 sinon.
+On redimensionne le t_reconstruction si n√©cessaire.
+
 PARAMETRES : un pointeur du'un objet de type t_reconstruction
 			 le t_bloc a ajouter
 RETOUR : 0 ->> l'ajout a echouer
@@ -131,14 +134,15 @@ RETOUR : 0 ->> l'ajout a echouer
 SPECIFICATIONS :
 
 */
-int ajouter_bloc(t_regroupement * rec, t_block bloc);
+int ajouter_bloc(t_reconstruction * rec, t_block bloc);
 /*****************************************************/
 
 /*************** AJOUTER_PILE_BLOCS ******************/
-/*
-Description : Si les deux structures sont du mÍme fichier,
-la fonction va dÈpiler tous les blocs du regroupement pour les
-ajouter ‡ la reconstruction (avec la fonction ajouter_bloc).
+/* MUTATRICE
+Description : Si les deux structures sont du m√™me fichier,
+la fonction va d√©piler tous les blocs du regroupement pour les
+ajouter √† la reconstruction (avec la fonction ajouter_bloc).
+
 
 PARAMETRES : un pointeur du'un objet de type t_reconstruction
 			 un pointeur du'un objet de type t_regroupement
@@ -152,8 +156,10 @@ void ajouter_pile_blocs(t_reconstruction *rec, t_regroupement * reg);
 /*****************************************************/
 
 /************* BLOC_DANS_RECONSTRUCTION **************/
-/*
-Description : Retourne le nombre actuel de blocs du 			  fichier dans la structure.
+/*  INFORMATRICE
+Description : Retourne le nombre actuel de blocs du 
+			  fichier dans la structure.
+
 PARAMETRES : un pointeur d'un objet de type t_reconstruction
 
 RETOUR : le nombre de bloc dans l'objet t_reconstruction
@@ -165,10 +171,12 @@ int bloc_dans_reconstruction(const t_reconstruction * rec);
 /*****************************************************/
 
 /**************** ETAT_RECONSTRUCTION ****************/
-/*
+/* INFORMATRICE
 Description : Retourne 1 si tous les blocs du fichier
 sont dans la structure et 0 sinon. Ceci se produit 
-lorsque le nombre de t_block actuellement prÈsents devient Ègal au nombre total de t_block du fichier.
+lorsque le nombre de t_block actuellement pr√©sents 
+devient √©gal au nombre total de t_block du fichier.
+
 
 PARAMETRES : un pointeur de l'objet de type t_reconstruction
 			 du fichier
@@ -185,20 +193,20 @@ int etat_reconstruction(t_reconstruction * rec);
 /*****************************************************/
 
 /**************** RECONSTRUIRE_FICH ******************/
-/*
-Description : Si la reconstruction est prÍte (avec 
+/* MUTATRICE
+Description : Si la reconstruction est pr√™te (avec 
 etat_reconstruction) et le fichier binaire est bien ouvert
-en Ècriture, tous les blocs díoctets des t_block sont 
-Ècrits, en ordre, dans le fichier puis le fichier est 
-fermÈ. La fonction libËre les tableaux dynamiques díoctets 
-dans tous les t_block et libËre aussi le tableau de 
+en √©criture, tous les blocs d‚Äôoctets des t_block sont 
+√©crits, en ordre, dans le fichier puis le fichier est 
+ferm√©. La fonction lib√®re les tableaux dynamiques d‚Äôoctets 
+dans tous les t_block et lib√®re aussi le tableau de 
 t_block dans la structure. Elle retourne 1 en cas de 
-succËs et 0 sinon
+succ√®s et 0 sinon
 
 PARAMETRES : L'objet de type t_reconstruction du fichier
 			 Le nom du nouveau fichier
 RETOUR : 0 ->> la reconstruction a echouer
-		 1 ->> la reconstruction est rÈussi
+		 1 ->> la reconstruction est r√©ussi
 
 SPECIFICATIONS :
 
@@ -206,7 +214,18 @@ SPECIFICATIONS :
 int reconstruire_fich(t_reconstruction *rec, const char * nom_fichier);
 /*****************************************************/
 
+/****************** FREE_REC_TAB *********************/
+/*
+Description : libere le tableau dynamique et remet tous les membres √† 0 ou NULL
 
+PARAMETRES : pointeur de l'objet de type de t_reconstruction
+
+RETOUR : RIEN
+
+SPECIFICATIONS :
+
+*/
+void free_rec_tab(t_reconstruction * rec);
 #endif
 /**********************************************************/
 
