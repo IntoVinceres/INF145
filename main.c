@@ -8,7 +8,7 @@ Auteur				:	Christophe Lamarche
 						&
 						Frederic Thibault
 Date de creation	:	05/02/2018
-Dernier modification:	05/02/2018
+Dernier modification:	26/02/2018
 
 Description			:
 Ce programme 
@@ -42,6 +42,7 @@ C.
 /*=========================================================*/
 #define TAILLE_T_BLOC	4000
 #define NBR_FICHIER		2
+#define MANDAT			1
 //---> La  valeur 0 correspond au main de test
 /*=========================================================*/
 /*                       LES MACROS                        */
@@ -88,7 +89,103 @@ void proc_decoup(int * taille_octet, t_block * bloc);
 void init_bloc(const char * nom, t_block * bloc, t_block * tab_bloc, t_block* *ptr);
 void transf_bloc(t_block *bloc, t_block *ptr);
 //Programme principal: fonction qui retourne un entier (int)
-#if(NBR_FICHIER == 1)
+#if(MANDAT == 1 && NBR_FICHIER == 1)
+int main(void)
+{
+	int				reussite = 0;
+	int				somme_octet1 = 0;
+	t_block			tab_bloc1[TAILLE_T_BLOC]; //Va devenir la pile -- Tableau dynamique
+	t_block			un_bloc;
+	t_block			*ptr = NULL; // pointeur du tableau
+
+	init_decoupage(); // commande d'initiation
+
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr);
+	print_bloc(&un_bloc);
+
+	if (id_fichier_valide(un_bloc.f_identifiant))
+	{
+		do {
+
+			proc_decoup(&somme_octet1, &un_bloc);
+			transf_bloc(&un_bloc, ptr);
+			
+			ptr++;
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+	}
+
+	
+	//	print_bloc(&tab_bloc1[13]); // TEST DE BLOC DANS LE TABLEAU
+	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
+	printf("\n\n");
+	system("pause");
+
+	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	return EXIT_SUCCESS;
+}
+#endif
+
+#if(MANDAT == 1 && NBR_FICHIER == 2)
+int main(void)
+{
+	int				reussite;
+	int				taille_octet1 = 0, taille_octet2 = 0; // taille des blocs avant le get_bloc()
+	int				compteur = 0;
+	t_block			un_bloc, deux_bloc; //bloc recevant le fichier
+	t_block			tab_bloc1[TAILLE_T_BLOC] = { 0 }, tab_bloc2[TAILLE_T_BLOC] = { 0 };
+	t_block			*ptr_tab1 = NULL, *ptr_tab2 = NULL;
+
+	// Les variables locales y sont déclaré
+
+	init_decoupage();
+
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr_tab1);
+	/* ------------ SUBSITITUTION ----------------
+	ptr_tab1=tab_bloc1
+	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
+	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet \
+	du fichier
+	un_bloc.num_bloc = get_nb_fichiers();
+	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
+	*/
+	print_bloc(&un_bloc);
+
+	init_bloc("affiche1.jpg", &deux_bloc, tab_bloc2, &ptr_tab2);
+	
+	print_bloc(&deux_bloc);
+	printf("\nNOMBRE DE FICHIER ACTIF:%i\n", get_nb_fichiers());
+
+	if (id_fichier_valide(un_bloc.f_identifiant))
+	{
+		do {
+			proc_decoup(&taille_octet1, &un_bloc);
+			transf_bloc(&un_bloc, ptr_tab1);
+			
+			ptr_tab1++;
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+	}
+
+	if (id_fichier_valide(deux_bloc.f_identifiant))
+	{
+		do {
+			proc_decoup(&taille_octet2, &deux_bloc);
+			transf_bloc(&un_bloc, ptr_tab2);
+
+			ptr_tab2++;
+		} while (get_taille_restante(deux_bloc.f_identifiant) != 0);
+	}
+
+	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
+	printf("\n\n");
+	system("pause");
+
+	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	return EXIT_SUCCESS;
+}
+#endif
+
+
+#if(MANDAT == 2 && NBR_FICHIER == 1)
 int main(void)
 {
 	int				reussite = 0;
@@ -132,7 +229,7 @@ int main(void)
 #endif
 
 //Utile pour faire des proc_decoups. le 2e main est inactif en ce moment puisque (0)
-#if(NBR_FICHIER == 2)
+#if(MANDAT == 2 && NBR_FICHIER == 2)
 int main(void)
 {
 	int				reussite;
@@ -151,7 +248,8 @@ int main(void)
 /* ------------ SUBSITITUTION ----------------
 	ptr_tab1=tab_bloc1
 	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
-	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet du fichier
+	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet \
+	du fichier
 	un_bloc.num_bloc = get_nb_fichiers();
 	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 */
@@ -207,6 +305,128 @@ int main(void)
 	return EXIT_SUCCESS;
 }
 #endif
+
+#if(MANDAT == 3 && NBR_FICHIER == 1)
+int main(void)
+{
+	int				reussite = 0;
+	int				somme_octet1 = 0;
+	t_block			tab_bloc1[TAILLE_T_BLOC]; //Va devenir la pile -- Tableau dynamique
+	t_block			un_bloc;
+	t_block			*ptr = NULL; // pointeur du tableau
+	t_regroupement	un_reg;
+
+	init_decoupage(); // commande d'initiation
+
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr);
+	un_reg = init_regroupement(un_bloc.f_identifiant, un_bloc.taille_bloc);
+	print_bloc(&un_bloc);
+
+	if (id_fichier_valide(un_bloc.f_identifiant))
+	{
+		do {
+
+			proc_decoup(&somme_octet1, &un_bloc);
+			//			transf_bloc(&un_bloc, ptr);
+			reussite = empiler_bloc(&un_reg, un_bloc);
+			ptr++;
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+	}
+
+	while (pile_blocs_nombre(&un_reg) != 0) {
+		reussite = depiler_bloc(&un_reg, &un_bloc);
+		print_bloc(&un_bloc);
+	}
+
+	free_pile_blocs(&un_reg);
+	//	print_bloc(&tab_bloc1[13]); // TEST DE BLOC DANS LE TABLEAU
+	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
+	printf("\n\n");
+	system("pause");
+
+	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	return EXIT_SUCCESS;
+}
+#endif
+
+//Utile pour faire des proc_decoups. le 2e main est inactif en ce moment puisque (0)
+#if(MANDAT == 3 && NBR_FICHIER == 2)
+int main(void)
+{
+	int				reussite;
+	int				taille_octet1 = 0, taille_octet2 = 0; // taille des blocs avant le get_bloc()
+	int				compteur = 0;
+	t_block			un_bloc, deux_bloc; //bloc recevant le fichier
+	t_block			tab_bloc1[TAILLE_T_BLOC] = { 0 }, tab_bloc2[TAILLE_T_BLOC] = { 0 };
+	t_block			*ptr_tab1 = NULL, *ptr_tab2 = NULL;
+	t_regroupement	un_reg, deux_reg;
+
+	// Les variables locales y sont déclaré
+
+	init_decoupage();
+
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr_tab1);
+	/* ------------ SUBSITITUTION ----------------
+	ptr_tab1=tab_bloc1
+	un_bloc.f_identifiant = ajouter_fichier("affiche.jpg"); //Reception du fichier
+	un_bloc.taille_bloc = get_taille_fichier(un_bloc.f_identifiant); //avoir la taille en octet \
+	du fichier
+	un_bloc.num_bloc = get_nb_fichiers();
+	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
+	*/
+	un_reg = init_regroupement(un_bloc.f_identifiant, un_bloc.taille_bloc);
+	print_bloc(&un_bloc);
+
+	init_bloc("affiche1.jpg", &deux_bloc, tab_bloc2, &ptr_tab2);
+	deux_reg = init_regroupement(deux_bloc.f_identifiant, deux_bloc.taille_bloc);
+
+	print_bloc(&deux_bloc);
+	printf("\nNOMBRE DE FICHIER ACTIF:%i\n", get_nb_fichiers());
+
+	if (id_fichier_valide(un_bloc.f_identifiant))
+	{
+		do {
+			proc_decoup(&taille_octet1, &un_bloc);
+			//			transf_bloc(&un_bloc, ptr);
+			reussite = empiler_bloc(&un_reg, un_bloc);
+
+			ptr_tab1++;
+		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+	}
+
+	if (id_fichier_valide(deux_bloc.f_identifiant))
+	{
+		do {
+			proc_decoup(&taille_octet2, &deux_bloc);
+			//			transf_bloc(&un_bloc, ptr);
+			reussite = empiler_bloc(&deux_reg, deux_bloc);
+
+			ptr_tab2++;
+		} while (get_taille_restante(deux_bloc.f_identifiant) != 0);
+	}
+
+
+	while (pile_blocs_nombre(&un_reg) != 0) {
+		reussite = depiler_bloc(&un_reg, &un_bloc);
+		print_bloc(&un_bloc);
+	}
+
+	while (pile_blocs_nombre(&deux_reg) != 0) {
+		reussite = depiler_bloc(&deux_reg, &deux_bloc);
+		print_bloc(&deux_bloc);
+	}
+
+	free_pile_blocs(&un_reg);
+	free_pile_blocs(&deux_reg);
+	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
+	printf("\n\n");
+	system("pause");
+
+	// et ÇA, c'est le retour d'un 0 au système d'exploitation.
+	return EXIT_SUCCESS;
+}
+#endif
+
 
 #if(NBR_FICHIER == 0) // main de test 
 int main(void){
@@ -271,14 +491,16 @@ Out :
 */
 
 void proc_decoup(int * taille_octet, t_block *bloc) {
-	*taille_octet = get_taille_restante(bloc->f_identifiant); // recherche de la taille avant get_bloc()
+	*taille_octet = get_taille_restante(bloc->f_identifiant); // recherche de la taille \
+															  avant get_bloc()
 	*bloc = get_bloc(); // On decoupe un bloc et on offre le reste
 	bloc->num_bloc = get_nb_blocs_emis(bloc->f_identifiant);
 	printf("\nBLOC#%u\t(TRANSMIS) ",bloc->num_bloc); // affichage du numero du bloc
 	printf("\tID:%u", bloc->f_identifiant); // affichage de l'addresse / ID
 	printf("\tTaille : %i\toctets", \
 		(*taille_octet - get_taille_restante(bloc->f_identifiant))); //taille du decoupage
-	printf("\tRESTANT : %i\toctets\n", get_taille_restante(bloc->f_identifiant)); // taille restant a decouper
+	printf("\tRESTANT : %i\toctets\n", get_taille_restante(bloc->f_identifiant)); // taille restant \
+																				   a decouper
 	return;
 }
 
