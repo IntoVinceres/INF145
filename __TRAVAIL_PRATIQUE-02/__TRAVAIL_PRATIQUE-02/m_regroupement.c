@@ -28,6 +28,10 @@
 	FONCITON DE POP ( ON DECREMENTE LE NOMBRE ACTUEL DE T_BLOCK & ON RETOURNE CE T_BLOC
 */
 
+/*-----------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------*/
+
 /*===============================================================================================*/
 /*
 typedef struct {
@@ -44,24 +48,30 @@ t_regroupement * reg ----> pointeur vers le regroupement
 */
 /*===============================================================================================*/
 /*================= FONCTIONS PUBLIQUE ===============*/
-// t_regroupement init_regroupement (unsigned int id, int taille)
-// Description : recoit l'identifiant unique d'un fichier et la taille maximale de la pile. Elle construit le
-//				 tableau dynamique necessaire et en cas de succes de l'allocation va fixer la taille,
-//				 l'identifiant unique et le nombre de d'elements (en cas d'echec de l'allocation, tous les 
-//				 membres du t_regroupement seront nuls (0 ou NULL). Elle retourne le nouvel objet
+/* 
+	t_regroupement init_regroupement (unsigned int id, int taille)
+	Description : recoit l'identifiant unique d'un fichier et la taille maximale de la pile. 
+				  Elle construit le tableau dynamique necessaire et en cas de succes de 
+				  l'allocation va fixer la taille, l'identifiant unique et le nombre de d'elements
+				  (en cas d'echec de l'allocation, tous les membres du t_regroupement seront nuls
+				  (0 ou NULL). Elle retourne le nouvel objet
+*/
 /*===============================================================================================*/
 
-t_regroupement init_regroupement(unsigned int id, int taille) {
+t_regroupement init_regroupement(unsigned int id, int taille)
+{
 	t_regroupement objet;
 
 	objet.ptr_bloc = (t_block *)calloc(taille, sizeof(t_block));
 
-	if (objet.ptr_bloc == NULL) {
+	if (objet.ptr_bloc == NULL) 
+	{
 		objet.taille_tab = 0;
 		objet.id_fichier = 0;
 		objet.nbr_bloc = 0;
 	}
-	else {
+	else 
+	{
 		objet.taille_tab = taille ;
 		objet.id_fichier = id;
 		objet.nbr_bloc = 0;
@@ -70,24 +80,33 @@ t_regroupement init_regroupement(unsigned int id, int taille) {
 	return objet;
 }
 /*===============================================================================================*/
-// int empiler_bloc (t_regroupement * reg, t_block bloc)
-// Description : Va empiler le block recu si les conditions necessaires sont satisfaites, elle 
-//				 copie le bloc dans le tableau et retourne 1 si l'action reussit et 0 sinon.
+/*
+	int empiler_bloc (t_regroupement * reg, t_block bloc)
+	Description : Va empiler le block recu si les conditions necessaires sont satisfaites, elle 
+				 copie le bloc dans le tableau et retourne 1 si l'action reussit et 0 sinon.
+*/
 /*===============================================================================================*/
 
-int empiler_bloc(t_regroupement * reg, t_block bloc) {
+int empiler_bloc(t_regroupement * reg, t_block bloc) 
+{
 	int result = 0;
 	
 	//verification de l'etat de la pile
-	if (pile_blocs_pleine(reg) != 0) {
+	if (pile_blocs_pleine(reg) != 0) 
+	{
 		result = 0; // le push a failli
 		printf("\nLA TENTATIVE D'EMPILER A ECHOUER\n");
-	}else{
-		*(reg->ptr_bloc+pile_blocs_nombre(reg)) = bloc; // depose (push) les informations du bloc \
-		dans la case memoire de la pile (prend en compte que la premiere espace memoire \
-		est la case 0
-		(reg->nbr_bloc)++; // informe du depot du bloc dans la pile
-		result = 1; // le push est complete
+	}
+	else
+	{
+
+		// Depose (push) les informations du bloc dans la case mémoire de la pile
+		// (prend en compte que la première espace mémoire est la case 0
+		*(reg->ptr_bloc+pile_blocs_nombre(reg)) = bloc; 
+		// informe du depot du bloc dans la pile
+		(reg->nbr_bloc)++; 
+		// le push est complete
+		result = 1; 
 	}
 
 	return result; // retourne le succes ou l'echec du push
@@ -100,14 +119,17 @@ int empiler_bloc(t_regroupement * reg, t_block bloc) {
 */
 /*===============================================================================================*/
 
-int depiler_bloc(t_regroupement * reg, t_block * bloc) {
+int depiler_bloc(t_regroupement * reg, t_block * bloc) 
+{
 	int result = 0;
 
-	if ((pile_blocs_vide(reg)) != 0) {
+	if ((pile_blocs_vide(reg)) != 0) 
+	{
 		result = 0; //le pop a failli -- impossibilite d'effectuer la tache
 		printf("\nLA TENTATIVE DE DEPILER A ECHOUER\n");
 	}
-	else {
+	else
+	{
 
 		// on enleve un bloc dans la pile
 		(reg->nbr_bloc)--; 
@@ -124,10 +146,12 @@ int depiler_bloc(t_regroupement * reg, t_block * bloc) {
 	Description : Retourne 1 si la pile est pleine et 0 sinon.
 */
 /*===============================================================================================*/
-int pile_blocs_pleine(const t_regroupement * reg) {
+int pile_blocs_pleine(const t_regroupement * reg) 
+{
 	int result = 0 ;
 
-	if (pile_blocs_nombre(reg) == ( pile_blocs_taille(reg) )) {
+	if (pile_blocs_nombre(reg) == ( pile_blocs_taille(reg) )) 
+	{
 		result = 1;
 	}
 	return result;
@@ -137,10 +161,12 @@ int pile_blocs_pleine(const t_regroupement * reg) {
 	Description : retourne 1 si la pile est vide et 0 sinon.
 */
 /*===============================================================================================*/
-int pile_blocs_vide(const t_regroupement * reg) {
+int pile_blocs_vide(const t_regroupement * reg)
+{
 	int result = 0;
 
-	if (pile_blocs_nombre(reg) == 0) {
+	if (pile_blocs_nombre(reg) == 0)
+	{
 		result = 1;
 	}
 	return result; 
@@ -150,7 +176,8 @@ int pile_blocs_vide(const t_regroupement * reg) {
 	Description : Retourne le nombre maximum de t_block dans la pile.
 */
 /*===============================================================================================*/
-int pile_blocs_taille(const t_regroupement * reg) {
+int pile_blocs_taille(const t_regroupement * reg) 
+{
 	int taille_max = reg->taille_tab;
 
 	return  taille_max;
@@ -160,7 +187,8 @@ int pile_blocs_taille(const t_regroupement * reg) {
 	Description : Retourne le nombre de t_block actuellement dans la pile
 */
 /*===============================================================================================*/
-int pile_blocs_nombre(const t_regroupement * reg) {
+int pile_blocs_nombre(const t_regroupement * reg) 
+{
 	int nbr_actu = 0;
 	nbr_actu = reg->nbr_bloc; // transfert la quantite de t_bloc dans le tableau dynamique
 	
@@ -171,7 +199,8 @@ int pile_blocs_nombre(const t_regroupement * reg) {
 	Description : libere le tableau dynamique et remet tous les membres à 0 ou NULL
 */
 /*===============================================================================================*/
-void free_pile_blocs(t_regroupement * reg) {
+void free_pile_blocs(t_regroupement * reg)
+{
 	free(reg->ptr_bloc); reg->ptr_bloc = NULL;
 	return;
 }
@@ -191,7 +220,8 @@ t_regroupement * reg ----> pointeur vers le regroupement
 */
 /*===============================================================================================*/
 static t_block block_vide(void);
-static t_block block_vide(void) {
+static t_block block_vide(void) 
+{
 	t_block b;
 
 	// simples assignations à zéro

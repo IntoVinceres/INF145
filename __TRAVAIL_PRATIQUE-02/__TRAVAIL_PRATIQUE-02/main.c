@@ -144,7 +144,8 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 
 			proc_decoup(&somme_octet1, &un_bloc);
 			transf_bloc(&un_bloc, ptr);
@@ -199,7 +200,8 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 			proc_decoup(&taille_octet1, &un_bloc);
 			transf_bloc(&un_bloc, ptr_tab1);
 			
@@ -209,7 +211,8 @@ int main(void)
 
 	if (id_fichier_valide(deux_bloc.f_identifiant))
 	{
-		do {
+		do
+		{
 			proc_decoup(&taille_octet2, &deux_bloc);
 			transf_bloc(&un_bloc, ptr_tab2);
 
@@ -246,7 +249,8 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 
 			proc_decoup(&somme_octet1, &un_bloc);
 //			transf_bloc(&un_bloc, ptr);
@@ -255,7 +259,8 @@ int main(void)
 		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
 	}
 	
-	while (pile_blocs_nombre(&un_reg) != 0) {
+	while (pile_blocs_nombre(&un_reg) != 0) 
+	{
 		reussite = depiler_bloc(&un_reg, &un_bloc);
 		print_bloc(&un_bloc);
 	}
@@ -309,7 +314,8 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do
+		{
 			proc_decoup(&taille_octet1, &un_bloc);
 //			transf_bloc(&un_bloc, ptr);
 			reussite = empiler_bloc(&un_reg, un_bloc);
@@ -320,7 +326,8 @@ int main(void)
 
 	if (id_fichier_valide(deux_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 			proc_decoup(&taille_octet2, &deux_bloc);
 //			transf_bloc(&un_bloc, ptr);
 			reussite = empiler_bloc(&deux_reg, deux_bloc);
@@ -371,7 +378,8 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 
 			proc_decoup(&somme_octet1, &un_bloc);
 			//			transf_bloc(&un_bloc, ptr);
@@ -380,7 +388,8 @@ int main(void)
 		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
 	}
 
-	while (pile_blocs_nombre(&un_reg) != 0) {
+	while (pile_blocs_nombre(&un_reg) != 0) 
+	{
 		reussite = depiler_bloc(&un_reg, &un_bloc);
 		print_bloc(&un_bloc);
 	}
@@ -434,33 +443,39 @@ int main(void)
 
 	if (id_fichier_valide(un_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 			proc_decoup(&taille_octet1, &un_bloc);
 			//			transf_bloc(&un_bloc, ptr);
 			reussite = empiler_bloc(&un_reg, un_bloc);
 
 			ptr_tab1++;
-		} while (get_taille_restante(un_bloc.f_identifiant) != 0);
+		} 
+		while (get_taille_restante(un_bloc.f_identifiant) != 0);
 	}
 
 	if (id_fichier_valide(deux_bloc.f_identifiant))
 	{
-		do {
+		do 
+		{
 			proc_decoup(&taille_octet2, &deux_bloc);
 			//			transf_bloc(&un_bloc, ptr);
 			reussite = empiler_bloc(&deux_reg, deux_bloc);
 
 			ptr_tab2++;
-		} while (get_taille_restante(deux_bloc.f_identifiant) != 0);
+		} 
+		while (get_taille_restante(deux_bloc.f_identifiant) != 0);
 	}
 
 
-	while (pile_blocs_nombre(&un_reg) != 0) {
+	while (pile_blocs_nombre(&un_reg) != 0) 
+	{
 		reussite = depiler_bloc(&un_reg, &un_bloc);
 		print_bloc(&un_bloc);
 	}
 
-	while (pile_blocs_nombre(&deux_reg) != 0) {
+	while (pile_blocs_nombre(&deux_reg) != 0) 
+	{
 		reussite = depiler_bloc(&deux_reg, &deux_bloc);
 		print_bloc(&deux_bloc);
 	}
@@ -480,7 +495,8 @@ int main(void)
 /*											PROGRAMME PRINCIPAL									 */
 /*===============================================================================================*/
 #if(NBR_FICHIER == 0) // main de test 
-int main(void){
+int main(void)
+{
 	t_regroupement test_reg;
 	t_block test_bloc;
 	t_block* ptr;
@@ -501,7 +517,8 @@ int main(void){
 			\nTaille tab  : %u" 
 		, test_reg.id_fichier, test_reg.nbr_bloc, test_reg.ptr_bloc, test_reg.taille_tab);
 	
-	for (int i = 0; i < 3; i++) {
+	for (int i = 0; i < 3; i++) 
+	{
 
 		proc_decoup(&taille_octet, &test_bloc);
 		reussite = empiler_bloc(&test_reg, test_bloc);
@@ -513,7 +530,8 @@ int main(void){
 			, test_reg.id_fichier, test_reg.nbr_bloc, test_reg.ptr_bloc, test_reg.taille_tab);
 	
 	}
-	while (pile_blocs_nombre(&test_reg)!= 0) {
+	while (pile_blocs_nombre(&test_reg)!= 0) 
+	{
 		(reussite > 0) ? printf("\nReussi\n") : printf("\nECHOUER\n");
 		reussite = depiler_bloc(&test_reg, &test_bloc);
 		print_bloc(&test_bloc);
@@ -548,7 +566,8 @@ Out :
 
 */
 /*===============================================================================================*/
-void proc_decoup(int * taille_octet, t_block *bloc) {
+void proc_decoup(int * taille_octet, t_block *bloc)
+{
 
 	// recherche de la taille avant get_bloc()
 	*taille_octet = get_taille_restante(bloc->f_identifiant); 
@@ -575,7 +594,8 @@ Out :
 
 */
 /*===============================================================================================*/
-void transf_bloc(t_block *bloc, t_block *ptr) {
+void transf_bloc(t_block *bloc, t_block *ptr)
+{
 	*(ptr) = *bloc;
 	return;
 }
@@ -588,7 +608,8 @@ Out :
 
 */
 /*===============================================================================================*/
-void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr) {
+void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr)
+{
 	*ptr = tab_bloc;
 	//Reception du fichier
 	bloc->f_identifiant = ajouter_fichier(nom_fichier);
