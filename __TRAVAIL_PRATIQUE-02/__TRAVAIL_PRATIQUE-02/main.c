@@ -18,9 +18,9 @@ Librairie necessaire:
 
 /*===============================================================================================*/
 /*
-Ce programme repond aux exigences du travail pratique numero
-2 pour le cours de INF145 - Programmation avance et langage
-C.
+	Ce programme repond aux exigences du travail pratique numero
+	2 pour le cours de INF145 - Programmation avance et langage
+	C.
 */
 /*===============================================================================================*/
 
@@ -47,6 +47,7 @@ C.
 /*									DÉFINITION DES CONSTANTES			                         */
 /*===============================================================================================*/
 #define TAILLE_T_BLOC	4000
+//Permet de naviger dans les mandats selon les tests désirés
 #define NBR_FICHIER		2
 #define MANDAT			1
 //---> La  valeur 0 correspond au main de test
@@ -119,7 +120,9 @@ Exemples d'appel :
 =================================================================================================*/
 void transf_bloc(t_block *bloc, t_block *ptr);
 
-/*************************************************************************************************/
+/*-----------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------*/
 
 /*===============================================================================================*/
 /*											MANDAT 1 - 1 FICHIER								 */
@@ -546,16 +549,21 @@ Out :
 */
 /*===============================================================================================*/
 void proc_decoup(int * taille_octet, t_block *bloc) {
-	*taille_octet = get_taille_restante(bloc->f_identifiant); // recherche de la taille \
-															  avant get_bloc()
-	*bloc = get_bloc(); // On decoupe un bloc et on offre le reste
+
+	// recherche de la taille avant get_bloc()
+	*taille_octet = get_taille_restante(bloc->f_identifiant); 
+	// On decoupe un bloc et on offre le reste														
+	*bloc = get_bloc(); 
 	bloc->num_bloc = get_nb_blocs_emis(bloc->f_identifiant);
-	printf("\nBLOC#%u\t(TRANSMIS) ",bloc->num_bloc); // affichage du numero du bloc
-	printf("\tID:%u", bloc->f_identifiant); // affichage de l'addresse / ID
+	// affichage du numero du bloc
+	printf("\nBLOC#%u\t(TRANSMIS) ",bloc->num_bloc); 
+	// affichage de l'addresse / ID
+	printf("\tID:%u", bloc->f_identifiant); 
+	//	taille du decoupage
 	printf("\tTaille : %i\toctets", \
-		(*taille_octet - get_taille_restante(bloc->f_identifiant))); //taille du decoupage
-	printf("\tRESTANT : %i\toctets\n", get_taille_restante(bloc->f_identifiant)); // taille restant \
-																				   a decouper
+		(*taille_octet - get_taille_restante(bloc->f_identifiant)));
+	// taille restant a decouper
+	printf("\tRESTANT : %i\toctets\n", get_taille_restante(bloc->f_identifiant)); 
 	return;
 }
 /*===============================================================================================*/
@@ -582,9 +590,13 @@ Out :
 /*===============================================================================================*/
 void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr) {
 	*ptr = tab_bloc;
-	bloc->f_identifiant = ajouter_fichier(nom_fichier); //Reception du fichier
-	bloc->taille_bloc = get_taille_fichier(bloc->f_identifiant); //avoir la taille en octet du fichier
-	bloc->num_bloc = get_nb_fichiers(); // nombre de fichier ouvert
-	bloc->buffer = tab_bloc; // met l'addresse de la premiere case du tableau
+	//Reception du fichier
+	bloc->f_identifiant = ajouter_fichier(nom_fichier);
+	//avoir la taille en octet du fichier
+	bloc->taille_bloc = get_taille_fichier(bloc->f_identifiant); 
+	// nombre de fichier ouvert
+	bloc->num_bloc = get_nb_fichiers();
+	// met l'addresse de la premiere case du tableau
+	bloc->buffer = tab_bloc; 
 	return;
 }

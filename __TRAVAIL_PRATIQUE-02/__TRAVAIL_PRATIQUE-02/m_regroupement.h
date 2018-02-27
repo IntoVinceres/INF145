@@ -180,7 +180,7 @@ int pile_blocs_nombre(const t_regroupement * reg);
 
 /****************** NOM FONCTION **********************/
 /*
-Description : libere le tableau dynamique et remet tous les membres à 0 ou NULL
+Description : libere le tableau dynamique et remet tous les membres Ã  0 ou NULL
 
 PARAMETRES :
 

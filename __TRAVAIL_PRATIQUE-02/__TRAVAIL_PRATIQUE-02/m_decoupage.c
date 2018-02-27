@@ -425,9 +425,9 @@ void print_bloc(const t_block * p_bloc){
 	print_etat_fichier(p_bloc->f_identifiant);
 	(p_bloc->bloc_final == (unsigned char)'1') ? printf(" ( FINAL )") : 0;
 	printf("\n\t>ID : %u", p_bloc->f_identifiant);	
-	printf("    >Taille : %u", p_bloc->taille_bloc);
-	printf("    >Adresse : %X", p_bloc->buffer);
-	printf("\n\n");
+	printf("\t>Taille : %u", p_bloc->taille_bloc);
+	printf("\t>Adresse : %X", p_bloc->buffer);
+	printf("\n");
 
 	return;
 }
