@@ -1,27 +1,27 @@
-/*----------------------------------------------------*/
-/* 	par Christophe Lamarche & Frederic Thibault		  */
-/*----------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------------*/
+/* 	                         par Christophe Lamarche & Frederic Thibault    	                 */
+/*-----------------------------------------------------------------------------------------------*/
 
-/*====================================================*/
+/*===============================================================================================*/
 #include "m_reconstruction.h"
 
-/*===================== CONSTANTE ====================*/
+/*======================================= CONSTANTE =============================================*/
 
 #define AUGMENTE_TAB	4
 
-/*====================================================*/
+/*===============================================================================================*/
 
-/*========= FONCTION DE CONDITION INITIALE ===========*/
-
-
-
-/*===================== FONCTION =====================*/
+/*============================= FONCTION DE CONDITION INITIALE ==================================*/
 
 
 
-/*======================================================
-========================================================
-======================================================*/
+/*========================================= FONCTION ============================================*/
+
+
+
+/*=================================================================================================
+===================================================================================================
+=================================================================================================*/
 /*
 typedef struct {
 
@@ -29,13 +29,13 @@ typedef struct {
 	t_block* ptr_bloc; //pointeur donnant acces au tableau dynamique de t_block
 	unsigned int taille_last_tab; //taille du tableau precedent
 	unsigned int nbr_bloc_actu; //nombre de t_bloc actuellement présent
-	unsigned int nbr_bloc_tot; //nobre total de t_block du fichier \
+	unsigned int nbr_bloc_tot; //nombre total de t_block du fichier \
 	(qu'on obtient en recevant le dernier bloc du découpage)
 
 } t_reconstruction;
 */
 
-/*================= FONCTIONS PUBLIQUE ===============*/
+/*=================================== FONCTIONS PUBLIQUE ========================================*/
 
 // t_reconstruction init_reconstruction(unsigned int id, int taille)
 //Description: reçoit l’identifiant unique d’un fichier et
@@ -81,13 +81,28 @@ return rec;
 //	succès, 0 sinon
 int redim_reconstruction(t_reconstruction * rec, int nouvelle_taille) {
 	int reussite = 0;
+	int i = 0;
+	t_block *ptr_new_tab = NULL;
 
-	rec->ptr_bloc = realloc(rec->ptr_bloc, nouvelle_taille);
+	ptr_new_tab = calloc(nouvelle_taille, sizeof(t_block));
 
-	if (rec->ptr_bloc != NULL) {
-		reussite = 1;
+	if (ptr_new_tab == NULL) {
+		return reussite; // 0
 	}
+	else {
 
+		for (i = 0; i < (rec->taille_last_tab); i++) {
+			*(ptr_new_tab + i) = *(rec->ptr_bloc + i);  //copie de chaque bloc dans l'ancien \
+														tableau vers le nouveau
+		}
+
+		rec->taille_last_tab = nouvelle_taille;
+		free_rec_tab(rec);  // liberation de l'espace de l'ancien tableau
+		rec->ptr_bloc = ptr_new_tab; // transfere l'adresse du nouveau tableau dans \
+										le pointeur de rec;
+		
+	}
+	
 	return reussite;
 }
 
@@ -97,20 +112,23 @@ int redim_reconstruction(t_reconstruction * rec, int nouvelle_taille) {
 //	position et on retourne 1 si l’action réussit, 0 sinon.
 //	On redimensionne le t_reconstruction si nécessaire.
 int ajouter_bloc(t_reconstruction * rec, t_block bloc) {
-	int reussite = 0; // variable de la reussite de la fonction
-	t_block* ptr_tab = rec->ptr_bloc;
-	int plus = bloc.num_bloc;
+	int plus = bloc.num_bloc - 1 ; // ->> #1 -> [0]
+	int reussite = 0; // variable de la reussite de la fonction	
 
-	if (pile_rec_pleine(rec)) { // verification qu'il reste de l'espace dans le tableau
-		redim_reconstruction(rec, (rec->nbr_bloc_tot + AUGMENTE_TAB)); // redimensionner du tableau
+	while(rec_to_petite(rec,&bloc)) { // verification qu'il reste de l'espace dans le tableau
+		redim_reconstruction(rec, (bloc.num_bloc)); // redimensionner du tableau
 	}
+	// cette technique vaut la peine, car la pile se vide de maniere decroissante
 
-	*((ptr_tab)+plus) = bloc; // on incorpore le bloc a la position du numero du bloc \
+	*((rec->ptr_bloc)+plus) = bloc; // on incorpore le bloc a la position du numero du bloc \
 									   dans le tableau de reconstruction
 	rec->nbr_bloc_actu++; //augmentation du nombre de bloc dans le tableau de reconstruction
 
-	if ((ptr_tab + plus)->taille_bloc != 0) { //si la valeur de la taille de bloc a ete modifiee
+	if ((rec->ptr_bloc + plus)->taille_bloc != 0) { //si la valeur de la taille de bloc a ete modifiee
 		reussite = 1; // la modification a reussi
+	}
+	if (bloc.bloc_final == 1) {
+		rec->nbr_bloc_tot = bloc.num_bloc;
 	}
 
 	return reussite;
@@ -121,14 +139,20 @@ int ajouter_bloc(t_reconstruction * rec, t_block bloc) {
 //	la fonction va dépiler tous les blocs du regroupement pour les
 //	ajouter à la reconstruction(avec la fonction ajouter_bloc).
 void ajouter_pile_blocs(t_reconstruction *rec, t_regroupement * reg) {
-	int i = 0; // variable sur l'indice du bloc transfere
+	int reussite = 0; // variable sur l'indice du bloc transfere
+	int i = 0;
+	t_block bloc;
 
 	if (rec->id_fichier == reg->id_fichier) { // si la reconstruction et le regroupement travaille \
 												 sur le meme fichier 
-		while (i < reg->taille_tab) { // on transfert tous les blocs de la pile dans le tableau \
+		i = 0;
+		while (pile_blocs_nombre(reg) != 0) { // on transfert tous les blocs de la pile dans le tableau \
 										  de reconstruction
-			ajouter_bloc(rec, *((reg->ptr_bloc) + i)); // on ajoute le ieme bloc de la pile 
-			i++; // on incremente la 
+			reussite = depiler_bloc(reg, &bloc);
+			if (reussite == 1) {
+				ajouter_bloc(rec, bloc); // on ajoute le ieme bloc de la pile 
+			}
+			i++;
 		}
 	}
 
@@ -175,17 +199,26 @@ int reconstruire_fich(t_reconstruction *rec, const char * nom_fichier) {
 	int succes = 0; // 0 ->> la reconstruction n'est pas fini \
 					  1 ->> la reconstruction est fini
 	FILE * ptr_fich = NULL;
+
 	ptr_fich = fopen(nom_fichier, "ab"); // ouvrir le nouveau fichier
+										 // & creation
 	
 	if (ptr_fich != NULL) {
-		while (i < (rec->nbr_bloc_tot)) { //si on a fait la transcription de tous les blocs dans le \
+		while (i < (bloc_dans_reconstruction(rec))) { //si on a fait la transcription de tous les blocs dans le \
 											tableau de reconstruction
 			fwrite((rec->ptr_bloc + i)->buffer, (rec->ptr_bloc + i)->taille_bloc, 1, ptr_fich);
 			// ecriture du contenu du bloc dans le fichier
 			i++; // incrementation du bloc observe
 		}
-		succes = 1; 
+		succes = 1; // ecriture reussi
 	}
+
+	else { // erreur d'ouverture du fichier
+		printf("** ERREUR D'OUVERTURE DU NOUVEAU FICHIER **");
+	}
+
+	fclose(ptr_fich);
+
 	return succes;
 }
 
@@ -212,7 +245,7 @@ unsigned int nbr_bloc; //nombre de t_bloc dans le tableau dynamique
 t_regroupement * reg ----> pointeur vers le regroupement
 
 */
-/*==========================================================*/
+/*===============================================================================================*/
 static t_block block_vide(void);
 static t_block block_vide(void) {
 	t_block b;
@@ -226,13 +259,13 @@ static t_block block_vide(void) {
 
 	return b;
 }
-/*===========================================================*/
-int pile_rec_pleine(t_reconstruction *rec);
-int pile_rec_pleine(t_reconstruction *rec) {
+/*===============================================================================================*/
+int rec_to_petite(t_reconstruction *rec, t_block *bloc);
+int rec_to_petite(t_reconstruction *rec, t_block *bloc) {
 	int plein = 0;
-	if (rec->nbr_bloc_actu >= rec->nbr_bloc_tot) {
+	if (((bloc)->num_bloc) > rec->taille_last_tab) {
 		plein = 1;
 	}
 	return plein;
 }
-/*===========================================================*/
+/*===============================================================================================*/
