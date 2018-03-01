@@ -197,7 +197,6 @@ Description : libere le tableau dynamique et remet tous les membres à 0 ou NULL
 void free_pile_blocs(t_regroupement * reg)
 {
 	free(reg->ptr_bloc); reg->ptr_bloc = NULL;
-	return;
 }
 /*===============================================================================================*/
 /*

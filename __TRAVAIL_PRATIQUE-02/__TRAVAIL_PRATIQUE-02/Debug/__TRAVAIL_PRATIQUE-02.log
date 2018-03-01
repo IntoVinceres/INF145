@@ -1,6 +1,7 @@
 ﻿  main.c
 c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\m_reconstruction.h(57): warning C4010: single-line comment contains line-continuation character
-c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(623): warning C4018: '<': signed/unsigned mismatch
-c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(589): warning C4101: 'nom_compie': unreferenced local variable
-c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(738): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
-LINK : fatal error LNK1168: cannot open C:\Users\an532\Documents\ÉTS\_2018_Hiver\INF145\__TRAVAIL_PRATIQUE-02\Debug\__TRAVAIL_PRATIQUE-02.exe for writing
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(633): warning C4018: '<': signed/unsigned mismatch
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(598): warning C4101: 'nom_compie': unreferenced local variable
+c:\users\an532\documents\éts\_2018_hiver\inf145\__travail_pratique-02\__travail_pratique-02\main.c(748): warning C4244: 'function': conversion from 'time_t' to 'unsigned int', possible loss of data
+  __TRAVAIL_PRATIQUE-02.vcxproj -> C:\Users\an532\Documents\ÉTS\_2018_Hiver\INF145\__TRAVAIL_PRATIQUE-02\Debug\__TRAVAIL_PRATIQUE-02.exe
+  __TRAVAIL_PRATIQUE-02.vcxproj -> C:\Users\an532\Documents\ÉTS\_2018_Hiver\INF145\__TRAVAIL_PRATIQUE-02\Debug\__TRAVAIL_PRATIQUE-02.pdb (Partial PDB)

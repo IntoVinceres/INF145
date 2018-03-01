@@ -64,7 +64,7 @@ else {
 	//		rec.ptr_bloc => adresse du tableau dynamique
 	rec.taille_last_tab = taille;
 	rec.nbr_bloc_actu = 0;
-	rec.nbr_bloc_tot = taille;
+	rec.nbr_bloc_tot = 0;
 }
 
 return rec;
@@ -112,11 +112,11 @@ int redim_reconstruction(t_reconstruction * rec, int nouvelle_taille) {
 //	position et on retourne 1 si l’action réussit, 0 sinon.
 //	On redimensionne le t_reconstruction si nécessaire.
 int ajouter_bloc(t_reconstruction * rec, t_block bloc) {
-	int plus = bloc.num_bloc - 1 ; // ->> #1 -> [0]
+	int plus = bloc.num_bloc; // ->> #1 -> [0]
 	int reussite = 0; // variable de la reussite de la fonction	
 
 	while(rec_to_petite(rec,&bloc)) { // verification qu'il reste de l'espace dans le tableau
-		redim_reconstruction(rec, (bloc.num_bloc)); // redimensionner du tableau
+		redim_reconstruction(rec, (bloc.num_bloc + 10)); // redimensionner du tableau
 	}
 	// cette technique vaut la peine, car la pile se vide de maniere decroissante
 
@@ -128,7 +128,7 @@ int ajouter_bloc(t_reconstruction * rec, t_block bloc) {
 		reussite = 1; // la modification a reussi
 	}
 	if (bloc.bloc_final == 1) {
-		rec->nbr_bloc_tot = bloc.num_bloc;
+		rec->nbr_bloc_tot = bloc.num_bloc+1;
 	}
 
 	return reussite;
@@ -202,7 +202,7 @@ int reconstruire_fich(t_reconstruction *rec, const char * nom_fichier) {
 					  1 ->> la reconstruction est fini
 	FILE * ptr_fich = NULL;
 
-	ptr_fich = fopen(nom_fichier, "ab"); // ouvrir le nouveau fichier
+	ptr_fich = fopen(nom_fichier, "wb"); // ouvrir le nouveau fichier
 										 // & creation
 	
 	if (ptr_fich != NULL) {
