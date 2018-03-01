@@ -21,10 +21,12 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="m_decoupage.c" />
+    <ClCompile Include="m_reconstruction.c" />
     <ClCompile Include="m_regroupement.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="m_decoupage.h" />
+    <ClInclude Include="m_reconstruction.h" />
     <ClInclude Include="m_regroupement.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

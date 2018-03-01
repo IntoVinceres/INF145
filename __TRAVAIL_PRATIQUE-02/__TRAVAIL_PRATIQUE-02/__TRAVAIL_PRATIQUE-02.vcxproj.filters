@@ -24,12 +24,18 @@
     <ClCompile Include="m_regroupement.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="m_reconstruction.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="m_decoupage.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="m_regroupement.h">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="m_reconstruction.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
