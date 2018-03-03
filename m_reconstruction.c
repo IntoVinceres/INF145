@@ -64,7 +64,7 @@ else {
 	//		rec.ptr_bloc => adresse du tableau dynamique
 	rec.taille_last_tab = taille;
 	rec.nbr_bloc_actu = 0;
-	rec.nbr_bloc_tot = taille;
+	rec.nbr_bloc_tot = 0;
 }
 
 return rec;
@@ -112,23 +112,22 @@ int redim_reconstruction(t_reconstruction * rec, int nouvelle_taille) {
 //	position et on retourne 1 si l’action réussit, 0 sinon.
 //	On redimensionne le t_reconstruction si nécessaire.
 int ajouter_bloc(t_reconstruction * rec, t_block bloc) {
-	int plus = bloc.num_bloc - 1 ; // ->> #1 -> [0]
 	int reussite = 0; // variable de la reussite de la fonction	
 
 	while(rec_to_petite(rec,&bloc)) { // verification qu'il reste de l'espace dans le tableau
-		redim_reconstruction(rec, (bloc.num_bloc)); // redimensionner du tableau
+		redim_reconstruction(rec, (bloc.num_bloc + AUGMENTE_TAB)); // redimensionner du tableau
 	}
 	// cette technique vaut la peine, car la pile se vide de maniere decroissante
 
-	*((rec->ptr_bloc)+plus) = bloc; // on incorpore le bloc a la position du numero du bloc \
+	*((rec->ptr_bloc)+bloc.num_bloc) = bloc; // on incorpore le bloc a la position du numero du bloc \
 									   dans le tableau de reconstruction
-	rec->nbr_bloc_actu++; //augmentation du nombre de bloc dans le tableau de reconstruction
-
-	if ((rec->ptr_bloc + plus)->taille_bloc != 0) { //si la valeur de la taille de bloc a ete modifiee
+	
+	if ((rec->ptr_bloc + bloc.num_bloc)->taille_bloc != 0) { //si la valeur de la taille de bloc a ete modifiee
+		rec->nbr_bloc_actu++; //augmentation du nombre de bloc dans le tableau de reconstruction
 		reussite = 1; // la modification a reussi
 	}
 	if (bloc.bloc_final == 1) {
-		rec->nbr_bloc_tot = bloc.num_bloc;
+		rec->nbr_bloc_tot = bloc.num_bloc+1;
 	}
 
 	return reussite;
@@ -143,18 +142,21 @@ void ajouter_pile_blocs(t_reconstruction *rec, t_regroupement * reg) {
 	int i = 0;
 	t_block bloc;
 
-	if (rec->id_fichier == reg->id_fichier) { // si la reconstruction et le regroupement travaille \
-												 sur le meme fichier 
-		i = 0;
-		while (pile_blocs_nombre(reg) != 0) { // on transfert tous les blocs de la pile dans le tableau \
-										  de reconstruction
-			reussite = depiler_bloc(reg, &bloc);
-			if (reussite == 1) {
-				ajouter_bloc(rec, bloc); // on ajoute le ieme bloc de la pile 
+
+			if ((reg->ptr_bloc + (pile_blocs_nombre(reg))-1)->f_identifiant == rec->id_fichier) {
+				reussite = depiler_bloc(reg, &bloc);
+
+
+				if (reussite == 1) {
+					reussite--; // reussite = 0 
+					while (reussite == 0) {
+						reussite = ajouter_bloc(rec, bloc); // on ajoute le ieme bloc de la pile 
+
+					}
+				}
 			}
 			i++;
-		}
-	}
+
 
 	return;
 }
@@ -200,7 +202,7 @@ int reconstruire_fich(t_reconstruction *rec, const char * nom_fichier) {
 					  1 ->> la reconstruction est fini
 	FILE * ptr_fich = NULL;
 
-	ptr_fich = fopen(nom_fichier, "ab"); // ouvrir le nouveau fichier
+	ptr_fich = fopen(nom_fichier, "wb"); // ouvrir le nouveau fichier
 										 // & creation
 	
 	if (ptr_fich != NULL) {
