@@ -46,13 +46,15 @@ C.
 /*===============================================================================================*/
 /*									DÉFINITION DES CONSTANTES			                         */
 /*===============================================================================================*/
-#define TAILLE_T_BLOC	4000
+#define TAILLE_T_BLOC		4000
+#define QTE_FICHIER			4
+#define QTE_REG				2
 //Permet de naviger dans les mandats selon les tests désirés
-#define NBR_FICHIER			2
-#define MANDAT				3
+#define NBR_FICHIER			1
+#define MANDAT				0
 //---> La  valeur 0 correspond au main de test
 #define TAILLE_PILE			5
-#define TAILLE_TAB_REC_INI	4
+#define TAILLE_TAB_REC_INI	40
 /*===============================================================================================*/
 /*									DÉFINITION DES MACROS						                 */
 /*===============================================================================================*/
@@ -95,7 +97,7 @@ Hypotheses :
 Valeur de retour :
 Exemples d'appel :
 =================================================================================================*/
-void init_bloc(const char * nom, t_block * bloc, t_block * tab_bloc, t_block* *ptr, t_reconstruction *rec);
+void init_bloc(const char * nom, t_block * bloc, t_block * tab_bloc, t_block* *ptr);
 /*=================================================================================================
 TITRE : transf_bloc
 codee par Christophe Lamarche
@@ -107,6 +109,11 @@ Exemples d'appel :
 =================================================================================================*/
 void transf_bloc(t_block *bloc, t_block *ptr);
 
+void demande_fichier(char * nom_fichier, char * nom_copie);
+void reception_fichier(int i, char* nom_fichier1, char* nom_copie1, char* nom_fichier2, \
+	char* nom_copie2, char* nom_fichier3, char* nom_copie3);
+int alea(int max);
+void init_reg_et_rec(const char * nom_fichier, t_regroupement *reg, t_reconstruction *rec);
 /*-----------------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------*/
@@ -224,7 +231,7 @@ int main(void)
 #if(MANDAT == 2 && NBR_FICHIER == 1)
 int main(void)
 {
-	int				reussite = 0;
+	int				reussite = 0, i = 0;
 	int				somme_octet1 = 0;
 	t_block			tab_bloc1[TAILLE_T_BLOC]; //Va devenir la pile -- Tableau dynamique
 	t_block			un_bloc;
@@ -234,7 +241,7 @@ int main(void)
 	init_decoupage(); // commande d'initiation
 
 	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr);
-	un_reg = init_regroupement(un_bloc.f_identifiant, 5/*un_bloc.taille_bloc*/);
+	un_reg = init_regroupement(un_bloc.f_identifiant, 500/*un_bloc.taille_bloc*/);
 	print_bloc(&un_bloc);
 	/*
 	if (id_fichier_valide(un_bloc.f_identifiant))
@@ -274,12 +281,19 @@ int main(void)
 		while (pile_blocs_nombre(&un_reg) != 0)
 		{
 			reussite = depiler_bloc(&un_reg, &un_bloc);
+			tab_bloc1[i] = un_bloc;
+			i++;
 			print_bloc(&un_bloc);
 		}
 
 	} while (get_taille_restante(un_bloc.f_identifiant) !=0 );
 
 	retirer_fichier(un_bloc.f_identifiant);
+
+
+
+
+
 	free_pile_blocs(&un_reg);
 	//	print_bloc(&tab_bloc1[13]); // TEST DE BLOC DANS LE TABLEAU
 	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
@@ -299,7 +313,7 @@ int main(void)
 {
 	int				reussite;
 	int				somme_octet1 = 0, somme_octet2 = 0; // taille des blocs avant le get_bloc()
-	int				compteur = 0;
+	int				compteur = 0,  compteur2 = 0;
 	t_block			un_bloc, deux_bloc; //bloc recevant le fichier
 	t_block			tab_bloc1[TAILLE_T_BLOC] = { 0 }, tab_bloc2[TAILLE_T_BLOC] = { 0 };
 	t_block			*ptr_tab1 = NULL, *ptr_tab2 = NULL;
@@ -318,11 +332,11 @@ int main(void)
 	un_bloc.num_bloc = get_nb_fichiers();
 	un_bloc.buffer = &tab_bloc1; //JE SAIS PAS QUOI FAIRE AVEC CE PARAMETRE
 	*/
-	un_reg = init_regroupement(un_bloc.f_identifiant, 5/*un_bloc.taille_bloc*/);
+	un_reg = init_regroupement(un_bloc.f_identifiant, TAILLE_PILE/*un_bloc.taille_bloc*/);
 	print_bloc(&un_bloc);
 
-	init_bloc("affiche1.jpg", &deux_bloc, tab_bloc2, &ptr_tab2);
-	deux_reg = init_regroupement(deux_bloc.f_identifiant, 8/*deux_bloc.taille_bloc*/);
+	init_bloc("ELE105_cours_07.pdf", &deux_bloc, tab_bloc2, &ptr_tab2);
+	deux_reg = init_regroupement(deux_bloc.f_identifiant, TAILLE_PILE/*deux_bloc.taille_bloc*/);
 
 	print_bloc(&deux_bloc);
 	printf("\nNOMBRE DE FICHIER ACTIF:%i\n", get_nb_fichiers());
@@ -381,6 +395,7 @@ int main(void)
 		while (pile_blocs_nombre(&un_reg) != 0)
 		{
 			reussite = depiler_bloc(&un_reg, &un_bloc);
+			tab_bloc1[compteur++] = un_bloc;
 			print_bloc(&un_bloc);
 		}
 
@@ -404,6 +419,7 @@ int main(void)
 		while (pile_blocs_nombre(&deux_reg) != 0)
 		{
 			reussite = depiler_bloc(&deux_reg, &deux_bloc);
+			tab_bloc2[compteur2++] = deux_bloc;
 			print_bloc(&deux_bloc);
 		}
 
@@ -437,7 +453,7 @@ int main(void)
 
 	init_decoupage(); // commande d'initiation
 
-	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr,&un_rec);
+	init_bloc("ELE105_cours_07.pdf", &un_bloc, tab_bloc1, &ptr);
 	un_reg = init_regroupement(un_bloc.f_identifiant, TAILLE_PILE);
 	un_rec = init_reconstruction(un_bloc.f_identifiant, TAILLE_TAB_REC_INI); 
 	print_bloc(&un_bloc);
@@ -455,15 +471,7 @@ int main(void)
 			}
 
 		}
-		/*
-		while (pile_blocs_nombre(&un_reg) != 0)
-		{
-			reussite = depiler_bloc(&un_reg, &un_bloc);
-
-			print_bloc(&un_bloc);
-			
-		}
-		*/
+		
 		ajouter_pile_blocs(&un_rec, &un_reg);
 
 	} while (get_taille_restante(un_bloc.f_identifiant) != 0);
@@ -472,7 +480,7 @@ int main(void)
 		print_bloc(un_rec.ptr_bloc + i);
 	}
 
-	reconstruire_fich(&un_rec, "poster.jpg");
+	reconstruire_fich(&un_rec, "poster2.pdf");
 
 	retirer_fichier(un_bloc.f_identifiant);
 	free_pile_blocs(&un_reg);
@@ -503,12 +511,12 @@ int main(void)
 
 	init_decoupage(); // commande d'initiation
 
-	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr_tab1, &un_rec);
+	init_bloc("affiche.jpg", &un_bloc, tab_bloc1, &ptr_tab1);
 	un_reg = init_regroupement(un_bloc.f_identifiant, TAILLE_PILE);
 	un_rec = init_reconstruction(un_bloc.f_identifiant, TAILLE_TAB_REC_INI);
 	print_bloc(&un_bloc);
 
-	init_bloc("affiche1.jpg", &deux_bloc, tab_bloc2, &ptr_tab2, &deux_rec);
+	init_bloc("affiche1.jpg", &deux_bloc, tab_bloc2, &ptr_tab2);
 	deux_reg = init_regroupement(deux_bloc.f_identifiant, TAILLE_PILE);
 	deux_rec = init_reconstruction(deux_bloc.f_identifiant, TAILLE_TAB_REC_INI);
 	print_bloc(&deux_bloc);
@@ -582,56 +590,72 @@ int main(void)
 /*===============================================================================================*/
 /*											PROGRAMME PRINCIPAL									 */
 /*===============================================================================================*/
-#if(NBR_FICHIER == 0) // main de test 
+#if(NBR_FICHIER == 0 || MANDAT == 0) // main de test 
 int main(void)
 {
-	t_regroupement test_reg;
-	t_block test_bloc;
-	t_block bloc;
-	t_block* ptr;
-	int taille_octet;
-	int reussite;
+	int reussite = 0, i = 0, j = 0;
+	int somme_octet = 0;
+	char *nom_fich[5];
+	char *nom_copie[5];
+	t_block bloc = { 0 };
+	t_regroupement reg[QTE_FICHIER];
+	t_reconstruction rec[QTE_FICHIER];
+	
+	nom_fich[0] = "affiche.jpg";
+	nom_fich[1] = "affiche1.jpg";
+	nom_fich[2] = "affiche2.jpg";
+	nom_fich[3] = "affiche3.jpg";
+	nom_fich[4] = "affiche4.jpg";
+	
+	nom_copie[0] = "copie_affiche.jpg";
+	nom_copie[1] = "copie_affiche1.jpg";
+	nom_copie[2] = "copie_affiche2.jpg";
+	nom_copie[3] = "copie_affiche3.jpg";
+	nom_copie[4] = "copie_affiche4.jpg";
 
-	/*
-	init_decoupage();
-	init_bloc("affiche.jpg", &test_bloc, NULL, &ptr);
-	test_reg = init_regroupement(test_bloc.f_identifiant, test_bloc.taille_bloc);
+	init_decoupage(); // commande d'initiation
 
-	print_bloc(&test_bloc);
-
-	//affichage de l'etat du regroupement
-	printf("\nId fichier  : %u\
-			\nNbr bloc    : %u\
-			\nAdresse tab : %X\
-			\nTaille tab  : %u"
-		, test_reg.id_fichier, test_reg.nbr_bloc, test_reg.ptr_bloc, test_reg.taille_tab);
-
-	for (int i = 0; i < 3; i++)
-	{
-
-		proc_decoup(&taille_octet, &test_bloc);
-		reussite = empiler_bloc(&test_reg, test_bloc);
-		(reussite >= 0) ? printf("\nReussi\n") : printf("\nECHOUER\n");
-		printf("\nId fichier  : %u\
-			\nNbr bloc    : %u\
-			\nAdresse tab : %X\
-			\nTaille tab  : %u"
-			, test_reg.id_fichier, test_reg.nbr_bloc, test_reg.ptr_bloc, test_reg.taille_tab);
-
-	}
-	while (pile_blocs_nombre(&test_reg) != 0)
-	{
-		(reussite > 0) ? printf("\nReussi\n") : printf("\nECHOUER\n");
-		reussite = depiler_bloc(&test_reg, &test_bloc);
-		print_bloc(&test_bloc);
+	for (i = 0; i < QTE_FICHIER; i++) {
+		init_reg_et_rec(nom_fich[i], (reg + i), (rec + i));
 	}
 
+	do {
+		for (i = 0; i < QTE_REG; i++) {
+			while (pile_blocs_pleine(reg+i) == 0 && \
+			get_taille_restante((rec+(QTE_FICHIER-1))->id_fichier) != 0) {
+			
+				proc_decoup(&somme_octet, &bloc);
+
+				reussite = empiler_bloc(reg+i, bloc);
+			}
+		}
+
+		for (j = 0; j < QTE_REG; j++) {
+			while (pile_blocs_nombre(reg+j) != 0) {
+				for (i = 0; i < QTE_FICHIER; i++) {
+					ajouter_pile_blocs((rec + i), (reg+j));
+				}
+			}
+		}
+	} while (get_taille_restante((rec + (QTE_FICHIER - 1))->id_fichier) != 0);
+
+	for (i = 0; i < QTE_FICHIER; i++) {
+		for (j = 0; j < (rec+i)->nbr_bloc_actu; j++) {
+			print_bloc((rec[i]).ptr_bloc + j);
+		}
+	}
+
+	for (i = 0; i < QTE_FICHIER; i++) {
+		reconstruire_fich(rec+i,nom_copie[i]);
+	}
+
+	for (i = 0; i < QTE_FICHIER; i++) {
+		retirer_fichier((rec+i)->id_fichier);
+		free_pile_blocs(reg+i);
+		free_rec_tab(rec+i);
+	}
 
 
-
-
-	free_pile_blocs(&test_reg);
-	*/
 
 	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
 	printf("\n\n");
@@ -663,14 +687,15 @@ void proc_decoup(int * taille_octet, t_block *bloc)
 	*taille_octet = get_taille_restante(bloc->f_identifiant);
 	// On decoupe un bloc et on offre le reste														
 	*bloc = get_bloc();
-	bloc->num_bloc = get_nb_blocs_emis(bloc->f_identifiant);
+	//transforme bloc #0 ->> bloc #1
+	//bloc->num_bloc = get_nb_blocs_emis(bloc->f_identifiant);
 	// affichage du numero du bloc
 	printf("\nBLOC#%u\t(TRANSMIS) ", bloc->num_bloc);
 	// affichage de l'addresse / ID
 	printf("\tID:%u", bloc->f_identifiant);
 	//	taille du decoupage
 	printf("\tTaille : %i\toctets", \
-		(*taille_octet - get_taille_restante(bloc->f_identifiant)));
+		(bloc->taille_bloc));
 	// taille restant a decouper
 	printf("\tRESTANT : %i\toctets\n", get_taille_restante(bloc->f_identifiant));
 	return;
@@ -696,16 +721,55 @@ In :
 Out :
 */
 /*===============================================================================================*/
-void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr, t_reconstruction* rec)
+void init_bloc(const char * nom_fichier, t_block * bloc, t_block * tab_bloc, t_block* *ptr)
 {
 	*ptr = tab_bloc;
 	//Reception du fichier
 	bloc->f_identifiant = ajouter_fichier(nom_fichier);
-	//avoir la taille en octet du fichier
-	bloc->taille_bloc = get_taille_fichier(bloc->f_identifiant);
-	// nombre de fichier ouvert
-	bloc->num_bloc = get_nb_fichiers();
-	// met l'addresse de la premiere case du tableau
-	bloc->buffer = rec;
+	if (bloc->f_identifiant == 0) {
+		printf("\nERREUR FICHIER NON-VALIDE\n");
+	}
+	else {
+		//avoir la taille en octet du fichier
+		bloc->taille_bloc = get_taille_fichier(bloc->f_identifiant);
+		// nombre de fichier ouvert
+		bloc->num_bloc = get_nb_fichiers();
+		// met l'addresse de la premiere case du tableau
+		bloc->buffer = NULL;
+	}
 	return;
 }
+
+void demande_fichier(char * nom_fichier, char * nom_copie) {
+	printf("\nNom du fichier a ouvrir :\n >>"); scanf("%s", nom_fichier);
+	printf("\nComment voulez-vous appeler votre copie :\n>>"); scanf("%s", nom_copie);
+	return;
+}
+
+void reception_fichier(int i, char* nom_fichier1, char* nom_copie1, char* nom_fichier2, \
+	char* nom_copie2, char* nom_fichier3, char* nom_copie3) {
+	if (i >= 1) 
+		demande_fichier(nom_fichier1, nom_copie1);
+	if (i >= 2) 
+		demande_fichier(nom_fichier2, nom_copie2);
+	if (i >= 3) 
+		demande_fichier(nom_fichier3, nom_copie3);
+}
+
+int alea(int max) {
+	srand(time(NULL)*rand());
+	return ((int)rand()%max);
+}
+
+void init_reg_et_rec(const char * nom_fichier, t_regroupement *reg, t_reconstruction *rec) {
+	int id = 0;
+	id = ajouter_fichier(nom_fichier);
+	if (id == 0) {
+		printf("\nERREUR FICHIER NON-VALIDE\n");
+	}
+	*reg = init_regroupement(id, TAILLE_PILE);
+	*rec = init_reconstruction(id, TAILLE_TAB_REC_INI);
+	
+	return;
+}
+
