@@ -593,20 +593,20 @@ int main(void)
 #if(NBR_FICHIER == 0 || MANDAT == 0) // main de test 
 int main(void)
 {
-	int reussite = 0, i = 0, j = 0;
-	int somme_octet = 0;
-	char *nom_fich[5];
-	char *nom_copie[5];
-	t_block bloc = { 0 };
-	t_regroupement reg[QTE_FICHIER];
-	t_reconstruction rec[QTE_FICHIER];
+	int i = 0, j = 0; // compteur
+	char *nom_fich[5]; // nom des fichiers
+	char *nom_copie[5]; // nom des copies des fichiers
+	t_block bloc = { 0 }; // bloc pour la division
+	t_regroupement reg[QTE_REG] = { 0 }; // regroupement / pile
+	t_reconstruction rec[QTE_FICHIER] = { 0 }; // t_reconstruction
 	
+	//initialisation des fichiers utilises  
 	nom_fich[0] = "affiche.jpg";
 	nom_fich[1] = "affiche1.jpg";
 	nom_fich[2] = "affiche2.jpg";
 	nom_fich[3] = "affiche3.jpg";
 	nom_fich[4] = "affiche4.jpg";
-	
+	//nom des copies des fichiers uitilises
 	nom_copie[0] = "copie_affiche.jpg";
 	nom_copie[1] = "copie_affiche1.jpg";
 	nom_copie[2] = "copie_affiche2.jpg";
@@ -614,48 +614,66 @@ int main(void)
 	nom_copie[4] = "copie_affiche4.jpg";
 
 	init_decoupage(); // commande d'initiation
-
+	//ajout des fichiers & initialisation des reg et des rec
+	
+	//initialisation des t_regroupement et des t_reconstruction
 	for (i = 0; i < QTE_FICHIER; i++) {
-		init_reg_et_rec(nom_fich[i], (reg + i), (rec + i));
+		//ajout du fichier et initialisation du t_reconstruction pour chaque fichier
+		rec[i]=init_reconstruction(ajouter_fichier(nom_fich[i]), TAILLE_TAB_REC_INI);
 	}
-
+	for (i = 0; i < QTE_REG; i++) {
+		//initialisationde chaque regroupement / pile
+		//NOTE : Dans ce main les t_regroupements recoivent des blocs ne possedant pas le meme id qu'eux
+		reg[i] = init_regroupement((rec[i]).id_fichier, TAILLE_PILE);
+	}
+	
 	do {
-		for (i = 0; i < QTE_REG; i++) {
+		//DIVISION DES FICHIERS EN BLOCS & AJOUT DE CEUX-CI DANS LA PILE
+		for (i = 0; i < QTE_REG; i++) { // pour chaque regroupement
 			while (pile_blocs_pleine(reg+i) == 0 && \
-			get_taille_restante((rec+(QTE_FICHIER-1))->id_fichier) != 0) {
-			
-				proc_decoup(&somme_octet, &bloc);
+			get_taille_restante((rec+(QTE_FICHIER-1))->id_fichier) != 0) { //tant que le bloc \
+								n'est pas plein ou que le fichier n'est pas totalement decouper
+				
+				proc_decoup(&bloc); // On decoupe un bloc et on indique les informations du bloc
+				
+				while (empiler_bloc(reg + i, bloc) == 0) {} //on empile le bloc dans le regroupement
+				// tant que l'empilage reussi
 
-				reussite = empiler_bloc(reg+i, bloc);
 			}
 		}
 
-		for (j = 0; j < QTE_REG; j++) {
-			while (pile_blocs_nombre(reg+j) != 0) {
-				for (i = 0; i < QTE_FICHIER; i++) {
-					ajouter_pile_blocs((rec + i), (reg+j));
+		for (i = 0; i < QTE_REG; i++) { //on vide chaque regroupement
+			while (pile_blocs_nombre(reg+i) != 0) { // tant qu'il y a des bloc dans la pile
+				for (j = 0; j < QTE_FICHIER; j++) {  // on test chaque tableau de reconstruction
+					ajouter_pile_blocs((rec + j), (reg+i)); // on depile la pile de la ieme regroupement dans \
+					// le tableau de reconstruction du meme identifiant que le bloc depile
 				}
 			}
 		}
-	} while (get_taille_restante((rec + (QTE_FICHIER - 1))->id_fichier) != 0);
+	} while (get_taille_restante((rec + (QTE_FICHIER - 1))->id_fichier) != 0); // Tant que le dernier \
+			fichier n'est pas decouper au complet
 
-	for (i = 0; i < QTE_FICHIER; i++) {
-		for (j = 0; j < (rec+i)->nbr_bloc_actu; j++) {
-			print_bloc((rec[i]).ptr_bloc + j);
+	//affichage des contenus du tableaux des t_reconstruction 
+	for (i = 0; i < QTE_FICHIER; i++) { // pour chaque fichier / t_reconstruction
+		for (j = 0; j < (rec+i)->nbr_bloc_actu; j++) { // pour chaque bloc dans le t_reconstruction
+			print_bloc((rec[i]).ptr_bloc + j); // affichage du bloc
 		}
 	}
 
-	for (i = 0; i < QTE_FICHIER; i++) {
-		reconstruire_fich(rec+i,nom_copie[i]);
+	//reconstruction des fichiers
+	for (i = 0; i < QTE_FICHIER; i++) { // pour chaque fichier
+		reconstruire_fich(rec+i,nom_copie[i]); //reconsruire le ieme fichier
 	}
-
+	
+	//libere les tableaux dynammiques des divisions des fichiers et des t_reconstructions
 	for (i = 0; i < QTE_FICHIER; i++) {
-		retirer_fichier((rec+i)->id_fichier);
-		free_pile_blocs(reg+i);
-		free_rec_tab(rec+i);
+		retirer_fichier((rec+i)->id_fichier); // liberation du fichier
+		free_rec_tab(rec+i); //libere le tableau dynamique du ieme fichier
 	}
-
-
+	//libere les tableaux dynamiques des t_regroupement
+	for (i = 0; i < QTE_REG; i++) {
+		free_pile_blocs(reg + i); //liberation du t_regroupement
+	}
 
 	// on termine avec le standard... "APPUYEZ UNE TOUCHE.."
 	printf("\n\n");
@@ -665,7 +683,6 @@ int main(void)
 	return EXIT_SUCCESS;
 }
 #endif
-
 /*************************************************************************************************/
 
 /*===============================================================================================*/
